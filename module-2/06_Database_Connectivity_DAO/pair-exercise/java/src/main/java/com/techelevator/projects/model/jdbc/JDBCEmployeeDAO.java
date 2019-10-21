@@ -38,7 +38,7 @@ public class JDBCEmployeeDAO implements EmployeeDAO {
 	@Override
 	public List<Employee> searchEmployeesByName(String firstNameSearch, String lastNameSearch) {
 		ArrayList<Employee> employees = new ArrayList<> ();
-		String sqlAllEmployees = "SELECT department_id, first_name,last_name,birth_date,gender,hire_date FROM employee WHERE first_name ILIKE '%'|| ? ||'%' AND last_name ILIKE '%'|| ? ||'%'";
+		String sqlAllEmployees = "SELECT employee_id, department_id, first_name,last_name,birth_date,gender,hire_date FROM employee WHERE first_name ILIKE '%'|| ? ||'%' AND last_name ILIKE '%'|| ? ||'%'";
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlAllEmployees, firstNameSearch, lastNameSearch);
 		while(results.next()) {
 			Employee employee = mapRowToEmployee(results);
@@ -46,15 +46,12 @@ public class JDBCEmployeeDAO implements EmployeeDAO {
 		}
 		
 		return employees;
-		
-		
-		
 	}
 
 	@Override
 	public List<Employee> getEmployeesByDepartmentId(long id) {
 		ArrayList<Employee> employees = new ArrayList<> ();
-		String sqlAllEmployee = "SELECT employee_id,department_id, first_name,last_name,birth_date,gender,hire_date FROM department WHERE department_id = ?";
+		String sqlAllEmployee = "SELECT employee_id,department_id, first_name,last_name,birth_date,gender,hire_date FROM employee WHERE department_id = ?";
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlAllEmployee, id);
 		while(results.next()) {
 			Employee employee = mapRowToEmployee(results);
@@ -62,17 +59,38 @@ public class JDBCEmployeeDAO implements EmployeeDAO {
 		}
 		
 		return employees;
-		
 	}
 
 	@Override
 	public List<Employee> getEmployeesWithoutProjects() {
-		return new ArrayList<>();
+		ArrayList<Employee> employees = new ArrayList<> ();
+		// Select all the employees that are not on a current project, where the to_date hasn't hit yet
+		String sqlAllEmployee = "SELECT employee_id,department_id, first_name,last_name,birth_date,gender,hire_date FROM employee "+
+								"WHERE employee_id NOT IN (" + 
+									"SELECT DISTINCT employee_id FROM project_employee " + 
+									"JOIN project USING(project_id) " + 
+									"WHERE to_date >= now()" + 
+								")";
+		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlAllEmployee);
+		while(results.next()) {
+			Employee employee = mapRowToEmployee(results);
+			employees.add(employee);
+		}
+		
+		return employees;
 	}
 
 	@Override
 	public List<Employee> getEmployeesByProjectId(Long projectId) {
-		return new ArrayList<>();
+		ArrayList<Employee> employees = new ArrayList<> ();
+		String sqlAllEmployee = "SELECT employee_id,department_id, first_name,last_name,birth_date,gender,hire_date FROM employee WHERE department_id = ?";
+		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlAllEmployee, projectId);
+		while(results.next()) {
+			Employee employee = mapRowToEmployee(results);
+			employees.add(employee);
+		}
+		
+		return employees;
 	}
 
 	@Override
