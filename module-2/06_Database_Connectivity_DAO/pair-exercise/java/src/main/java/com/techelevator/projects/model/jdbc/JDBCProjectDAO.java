@@ -50,7 +50,6 @@ public class JDBCProjectDAO implements ProjectDAO {
 	
 	private Project mapRowToProject(SqlRowSet results) {
 		Project projects = new Project();//making a pojo
-		results.next();
 		projects.setId(results.getLong("project_id"));
 		projects.setName(results.getString("name"));
 		Date startDate = results.getDate("from_date");
