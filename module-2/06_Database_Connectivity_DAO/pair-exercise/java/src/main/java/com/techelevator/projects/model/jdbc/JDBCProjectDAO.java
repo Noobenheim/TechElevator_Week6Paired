@@ -1,5 +1,7 @@
 package com.techelevator.projects.model.jdbc;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +24,7 @@ public class JDBCProjectDAO implements ProjectDAO {
 	@Override
 	public List<Project> getAllActiveProjects() {
 		ArrayList<Project> projects = new ArrayList<> ();
-		String sqlAllProjects = "SELECT project_id, name,from_date, to_date" +
+		String sqlAllProjects = "SELECT project_id, name, from_date, to_date " +
 								"FROM project";
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlAllProjects);
 		while(results.next()) {
@@ -48,10 +50,17 @@ public class JDBCProjectDAO implements ProjectDAO {
 	
 	private Project mapRowToProject(SqlRowSet results) {
 		Project projects = new Project();//making a pojo
+		results.next();
 		projects.setId(results.getLong("project_id"));
 		projects.setName(results.getString("name"));
-		projects.setStartDate(results.getDate("from_date").toLocalDate());
-		projects.setEndDate(results.getDate("to_date").toLocalDate());
+		Date startDate = results.getDate("from_date");
+		if( startDate != null ) {
+			projects.setStartDate(startDate.toLocalDate());
+		}
+		Date endDate = results.getDate("to_date");
+		if( endDate != null ) {
+			projects.setEndDate(endDate.toLocalDate());
+		}
 		
 		return projects;
 	}
