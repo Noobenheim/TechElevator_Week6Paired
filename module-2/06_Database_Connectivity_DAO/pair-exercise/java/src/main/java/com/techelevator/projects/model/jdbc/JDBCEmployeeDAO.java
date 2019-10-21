@@ -83,7 +83,7 @@ public class JDBCEmployeeDAO implements EmployeeDAO {
 	@Override
 	public List<Employee> getEmployeesByProjectId(Long projectId) {
 		ArrayList<Employee> employees = new ArrayList<> ();
-		String sqlAllEmployee = "SELECT employee_id,department_id, first_name,last_name,birth_date,gender,hire_date FROM employee WHERE department_id = ?";
+		String sqlAllEmployee = "SELECT employee_id,department_id, first_name,last_name,birth_date,gender,hire_date FROM employee  JOIN project_employee ON employee.employee_id = project_employee.employee_id WHERE project_id = ?";
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlAllEmployee, projectId);
 		while(results.next()) {
 			Employee employee = mapRowToEmployee(results);
@@ -95,7 +95,8 @@ public class JDBCEmployeeDAO implements EmployeeDAO {
 
 	@Override
 	public void changeEmployeeDepartment(Long employeeId, Long departmentId) {
-
+		String sqlAllEmployee = "UPDATE employee SET department_id = ? WHERE employee_id = ?";
+		jdbcTemplate.update (sqlAllEmployee, departmentId, employeeId);
 	}
 	
 	private Employee mapRowToEmployee(SqlRowSet results) {
