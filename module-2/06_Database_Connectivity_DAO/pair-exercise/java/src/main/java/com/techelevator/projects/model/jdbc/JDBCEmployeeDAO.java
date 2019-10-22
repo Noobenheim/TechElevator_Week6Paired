@@ -8,10 +8,8 @@ import javax.sql.DataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
-import com.techelevator.projects.model.Department;
 import com.techelevator.projects.model.Employee;
 import com.techelevator.projects.model.EmployeeDAO;
-import com.techelevator.projects.model.Project;
 
 public class JDBCEmployeeDAO implements EmployeeDAO {
 
@@ -68,8 +66,8 @@ public class JDBCEmployeeDAO implements EmployeeDAO {
 		String sqlAllEmployee = "SELECT employee_id,department_id, first_name,last_name,birth_date,gender,hire_date FROM employee "+
 								"WHERE employee_id NOT IN (" + 
 									"SELECT DISTINCT employee_id FROM project_employee " + 
-									"JOIN project USING(project_id) " + 
-									"WHERE to_date >= now()" + 
+									"LEFT JOIN project USING(project_id) " + 
+									"WHERE to_date >= now() OR to_date IS NULL" + 
 								")";
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlAllEmployee);
 		while(results.next()) {

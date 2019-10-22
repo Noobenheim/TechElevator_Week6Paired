@@ -1,7 +1,6 @@
 package com.techelevator.projects.model.jdbc;
 
 import java.sql.Date;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +24,8 @@ public class JDBCProjectDAO implements ProjectDAO {
 	public List<Project> getAllActiveProjects() {
 		ArrayList<Project> projects = new ArrayList<> ();
 		String sqlAllProjects = "SELECT project_id, name, from_date, to_date " +
-								"FROM project";
+								"FROM project " +
+								"WHERE to_date >= now() OR to_date IS NULL";
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlAllProjects);
 		while(results.next()) {
 			Project project = mapRowToProject(results);
