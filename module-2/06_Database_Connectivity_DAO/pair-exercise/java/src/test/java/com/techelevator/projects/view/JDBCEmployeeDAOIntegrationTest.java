@@ -48,7 +48,7 @@ public class JDBCEmployeeDAOIntegrationTest {
 
 	@Before
 	public void makeDao() {
-		dao = new JDBCEmployeeDAO(projects);// object that allows us to access database
+		dao = new JDBCEmployeeDAO(projects);// object that allows us to access database (like our DBVisualizer)
 	}
 
 	@Test
@@ -116,6 +116,7 @@ public class JDBCEmployeeDAOIntegrationTest {
 		String sqlInsertProject = "INSERT INTO project (project_id, name) VALUES (?,?)";
 		long project_id = getNextProjectId();// make helper method
 		jdbcTemplate.update(sqlInsertProject, project_id, "Operation Northwoods");
+		
 		List<Employee> oldProjectos = dao.getEmployeesByProjectId(project_id);
 		JDBCProjectDAO projectDao = new JDBCProjectDAO(projects);
 		projectDao.addEmployeeToProject(project_id, employee_id);
