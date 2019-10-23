@@ -24,7 +24,7 @@ public class JDBCProjectDAOIntegrationTest {
 	public static void setupDataSource() {
 		projects = DBTestHelper.getConnection();
 		
-		dao = new JDBCProjectDAO(projects);							  // object that allows us to access database
+		dao = DBTestHelper.getProjectDAO();							  // object that allows us to access database
 	}
 
 	@AfterClass // Run this at the end of all our testing (just once after everything)
