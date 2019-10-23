@@ -1,6 +1,5 @@
 package com.techelevator.projects.model.jdbc;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +10,6 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import com.techelevator.projects.model.Department;
 import com.techelevator.projects.model.DepartmentDAO;
-import com.techelevator.projects.model.Project;
 
 public class JDBCDepartmentDAO implements DepartmentDAO {
 	
@@ -55,8 +53,9 @@ public class JDBCDepartmentDAO implements DepartmentDAO {
 
 	@Override
 	public Department createDepartment(Department newDepartment) {
+		long nextDepartmentId = getNextDepartmentId();
+		newDepartment.setId(nextDepartmentId);
 		String sqlAllDepartment = "INSERT INTO department (department_id, name) VALUES (?,?)";
-		newDepartment.setId(getNextDepartmentId());
 		jdbcTemplate.update(sqlAllDepartment, newDepartment.getId(), newDepartment.getName());
 		return newDepartment;
 		
